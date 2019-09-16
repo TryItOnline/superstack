@@ -15,24 +15,24 @@ import sys,random
 def run(text,debug=0):
     prog = [line.lower()
             for line in text.replace('\t',' ').replace('\n',' ').strip().split(' ')
-            if line!=] #Hack and slash the text to put each keyword in an element on a list
+            if line!=''] #Hack and slash the text to put each keyword in an element on a list
     if debug:print 'running:\n',prog
-    
+
     stack = [] #The stack
     jump_stack = [] #The jump stack for if-fi loops
-    
+
     pc = 0 #program counter
-    
+
     while pc<len(prog):
         inst = prog[pc]
         if debug:print pc,':',inst
-        
+
         #Numbers
         try:
             stack.append(int(inst))
         except:
             pass
-        
+
         #Math
         if   inst=='add':stack.append(stack.pop()+stack.pop())
         elif inst=='sub':
@@ -46,7 +46,7 @@ def run(text,debug=0):
             a,b = stack.pop(),stack.pop()
             stack.append(b%a)
         elif inst=='random': stack.append(random.randrange(stack.pop()))
-        
+
         #Logic
         elif inst=='and':
             stack.append(int(
@@ -66,13 +66,13 @@ def run(text,debug=0):
             stack.append(int(
                 not (bool(stack.pop()) and bool(stack.pop()))
                 ))
-        
+
         #I/O
         elif inst=='output':sys.stdout.write(str(stack.pop())+' ')
         elif inst=='input':stack.append(int(raw_input('?')))
         elif inst=='outputascii':sys.stdout.write(chr(stack.pop()))
-        elif inst=='inputascii':stack.extend(map(ord,raw_input())[::-1]) #Ah, slice steps
-        
+        elif inst=='inputascii':stack.extend(map(ord,raw_input(''))[::-1]) #Ah, slice steps
+
         #Stack manipulation
         elif inst=='pop':stack.pop()
         elif inst=='swap':
@@ -87,7 +87,7 @@ def run(text,debug=0):
             stack.append(a)
             stack.append(a)
         elif inst=='rev':stack.reverse()
-        
+
         #Flow
         elif inst=='quit':return
         elif inst=='if': #While loop
@@ -103,16 +103,16 @@ def run(text,debug=0):
                     elif inst=='fi':
                         loop -= 1
         elif inst=='fi': pc = jump_stack.pop()
-        
+
         #Misc
         elif inst=='debug':print stack
         pc+=1
-    
+
     if stack and debug:
         print'program ended with not empty stack:\n',stack
 
 def usage():
-    print 'superstack.py my_program.ss! [-d]
+    print 'superstack.py my_program.ss! [-d]'
     print '    -d  debug'
     sys.exit(2)
 try:
@@ -125,3 +125,4 @@ except IOError:
     print'Can not read file',sys.argv[1]
 except IndexError:
     usage()
+
